@@ -65,7 +65,7 @@ function parseStateResponse(body, deviceID)
 			}
 		}
 	}
-	return state;
+	return windowState;
 }
 
 WindowAccessory.prototype.getState = function(callback) {
