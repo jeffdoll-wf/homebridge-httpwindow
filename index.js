@@ -31,13 +31,13 @@ function pollState(deviceID) {
 		if (!err && response.statusCode == 200)
 		{
 			var pollState = parseStateResponse(body, deviceID);
-			this.log("pollstate is %s", pollState);
+			console.log("pollstate is %s", pollState);
 			var closed = pollState == "closed";
 			callback(null, closed); // success
 		}
 		else
 		{
-			this.log("Error getting state: %s", err);
+			console.log("Error getting state: %s", err);
 			callback(err);
 		}
 	return pollState;
