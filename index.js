@@ -6,42 +6,31 @@ module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
 
-	homebridge.registerAccessory("homebridge-httpwindow", "Httpwindow", WindowAccessory);
+	homebridge.registerAccessory("homebridge-httpwindow", "Httpwindow", DoorAccessory);
 };
 
-function WindowAccessory(log, config) {
+function DoorAccessory(log, config) {
 	this.log = log;
 	this.name = config["name"];
 	this.deviceID = config["deviceID"];
+	this.openState = 1;
+	this.closedState = 0;
+//	this.controlURL = config["controlURL"];
 	this.statusURL = config["statusURL"];
 
 	this.windowservice = new Service.ContactSensor(this.name);
 
 	this.windowservice
 		.getCharacteristic(Characteristic.ContactSensorState)
-		.on('get', this.getState.bind(this))
-		.setValue(pollState(this.deviceID, this.statusURL));
+		.on('get', this.getState.bind(this));
+
+//	this.windowservice
+//		.getCharacteristic(Characteristic.TargetDoorState)
+//		.on('get', this.getState.bind(this))
+//		.on('set', this.setState.bind(this));
 }
 
-function pollState(deviceID, statusURL) {
-	request.get({
-		url: statusURL
-	}, function (err, response, body)
-	{
-		if (!err && response.statusCode == 200)
-		{
-			var pollState = parseStateResponse(body, deviceID);
-			console.log("pollstate is %s", pollState);
-		}
-		else
-		{
-			console.log("Error getting state: %s", err);
-		}
-	return pollState;
-	})
-}
-
-function parseStateResponse(body, deviceID)
+function parseStateResponse(body, deviceID, openState, closedState)
 {
 	var windowState = null;
 	var x = body.split('\n')[4];
@@ -52,31 +41,33 @@ function parseStateResponse(body, deviceID)
 		if (statuses[i].indexOf(deviceID) >= 0)
 		{
 			var state = statuses[i].split("|")[1];
-			console.log("state is %s", state);
-			if (state == "0")
+			if (state == closedState)
 			{
 				windowState = "closed";
-				console.log("window is closed")
+				console.log("windowState is %s", windowState)
 			}
-			else if (state == "1")
+			else if (state == openState)
 			{
 				windowState = "open";
-				console.log("window is open")
+				console.log("windowState is %s", windowState)
 			}
+//			else {
+//				doorState = "moving";
+//			}
 		}
 	}
 	return state;
 }
 
-WindowAccessory.prototype.getState = function(callback) {
+DoorAccessory.prototype.getState = function(callback) {
 	this.log("Getting current state...");
 
 	request.get({
 		url: this.statusURL
 	}, function(err, response, body) {
 		if (!err && response.statusCode == 200) {
-			var pollState = parseStateResponse(body, this.deviceID);
-			this.log("pollstate is %s", pollState);
+			var pollState = parseStateResponse(body, this.deviceID,
+					this.openState, this.closedState);
 			var closed = pollState == "closed";
 			callback(null, closed); // success
 		} else {
@@ -106,6 +97,6 @@ WindowAccessory.prototype.getState = function(callback) {
 //	}.bind(this));
 //};
 
-WindowAccessory.prototype.getServices = function() {
+DoorAccessory.prototype.getServices = function() {
 	return [this.windowservice];
 };
