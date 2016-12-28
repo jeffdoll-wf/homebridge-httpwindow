@@ -19,7 +19,8 @@ function WindowAccessory(log, config) {
 
 	this.windowservice
 		.getCharacteristic(Characteristic.ContactSensorState)
-		.on('get', this.getState.bind(this));
+		.on('get', this.getState.bind(this))
+		.setValue(this.getState());
 }
 
 function parseStateResponse(body, deviceID)
