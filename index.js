@@ -33,6 +33,7 @@ function parseStateResponse(body, deviceID)
 		if (statuses[i].indexOf(deviceID) >= 0)
 		{
 			var state = statuses[i].split("|")[1];
+			console.log("state is %s", state);
 			if (state == "0")
 			{
 				windowState = "closed";
@@ -56,6 +57,7 @@ WindowAccessory.prototype.getState = function(callback) {
 	}, function(err, response, body) {
 		if (!err && response.statusCode == 200) {
 			var pollState = parseStateResponse(body, this.deviceID);
+			this.log("pollstate is %s", pollState);
 			var closed = pollState == "closed";
 			callback(null, closed); // success
 		} else {
