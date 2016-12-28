@@ -1,0 +1,21 @@
+{
+    "bridge": {
+        "name": "HomebridgePI",
+        "username": "CD:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "031-45-156"
+    },
+    
+    "description": "HTTP Window library for getting state where status is available by REST call",
+
+    "platforms": [],
+
+    "accessories": [
+        {
+            "accessory": "Httpwindow",
+            "name": "Window Name",
+            "deviceID": "[VOLTSEC_DEVICE_ID]",
+            "statusURL": "status_url"
+        }
+    ]
+}
