@@ -20,7 +20,7 @@ function WindowAccessory(log, config) {
 	this.windowservice
 		.getCharacteristic(Characteristic.ContactSensorState)
 		.on('get', this.getState.bind(this))
-		.setValue("open");
+		.setValue(pollState(deviceID));
 }
 
 function pollState(deviceID) {
@@ -65,7 +65,7 @@ function parseStateResponse(body, deviceID)
 			}
 		}
 	}
-	return windowState;
+	return state;
 }
 
 WindowAccessory.prototype.getState = function(callback) {
