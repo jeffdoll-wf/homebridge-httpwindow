@@ -20,7 +20,28 @@ function WindowAccessory(log, config) {
 	this.windowservice
 		.getCharacteristic(Characteristic.ContactSensorState)
 		.on('get', this.getState.bind(this))
-		.setValue(this.getState());
+		.setValue(pollState());
+}
+
+function pollState(deviceID) {
+	request.get({
+		url: this.statusURL
+	}, function (err, response, body)
+	{
+		if (!err && response.statusCode == 200)
+		{
+			var pollState = parseStateResponse(body, deviceID);
+			this.log("pollstate is %s", pollState);
+			var closed = pollState == "closed";
+			callback(null, closed); // success
+		}
+		else
+		{
+			this.log("Error getting state: %s", err);
+			callback(err);
+		}
+	return pollState;
+	})
 }
 
 function parseStateResponse(body, deviceID)
