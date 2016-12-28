@@ -20,12 +20,12 @@ function WindowAccessory(log, config) {
 	this.windowservice
 		.getCharacteristic(Characteristic.ContactSensorState)
 		.on('get', this.getState.bind(this))
-		.setValue(pollState(config["deviceID"]));
+		.setValue(pollState(this.deviceID));
 }
 
-function pollState(deviceID) {
+function pollState(deviceID, statusURL) {
 	request.get({
-		url: this.statusURL
+		url: statusURL
 	}, function (err, response, body)
 	{
 		if (!err && response.statusCode == 200)
