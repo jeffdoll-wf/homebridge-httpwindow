@@ -20,7 +20,7 @@ function WindowAccessory(log, config) {
 	this.windowservice
 		.getCharacteristic(Characteristic.ContactSensorState)
 		.on('get', this.getState.bind(this))
-		.setValue(1);
+		.setValue(open);
 }
 
 function pollState(deviceID) {
